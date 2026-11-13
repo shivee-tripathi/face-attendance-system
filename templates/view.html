@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Attendance | Face Attendance System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/view.css') }}">
+          
+
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-icon">FA</div>
+        <div>
+            <h2>Face Attendance</h2>
+            <p>Management System</p>
+        </div>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="back-btn">
+        ← Dashboard
+    </a>
+</header>
+
+<main class="main-container">
+
+    <section class="page-heading">
+        <span class="eyebrow">ATTENDANCE MANAGEMENT</span>
+        <h1>View Attendance</h1>
+        <p>Track attendance of all enrolled students.</p>
+    </section>
+
+    <!-- FILTERS -->
+    <section class="filter-card">
+        <div class="filter-heading">
+            <div class="section-icon">▤</div>
+            <div>
+                <h3>Attendance Filters</h3>
+                <p>Choose a period or search for a student.</p>
+            </div>
+        </div>
+
+        <form method="GET" action="{{ url_for('view') }}"
+              class="filter-form">
+
+            <div class="date-field">
+                <label for="filter">Attendance Period</label>
+                <select id="filter" name="filter">
+                    <option value="today"
+                        {% if selected_filter == 'today' %}selected{% endif %}>
+                        Today
+                    </option>
+                    <option value="weekly"
+                        {% if selected_filter == 'weekly' %}selected{% endif %}>
+                        This Week
+                    </option>
+                    <option value="monthly"
+                        {% if selected_filter == 'monthly' %}selected{% endif %}>
+                        Monthly
+                    </option>
+                    <option value="specific"
+                        {% if selected_filter == 'specific' %}selected{% endif %}>
+                        Specific Date
+                    </option>
+                </select>
+            </div>
+
+            <div class="date-field" id="date-field">
+                <label for="date">Select Date</label>
+                <input type="date" id="date" name="date"
+                       max="{{ end_date if selected_filter == 'specific' else start_date }}"
+                       value="{{ selected_date }}">
+            </div>
+
+            <div class="date-field" id="month-field">
+                <label for="month">Select Month</label>
+                <input type="month" id="month" name="month"
+                       value="{{ selected_month }}">
+            </div>
+
+            <div class="date-field">
+                <label for="student">Specific Student</label>
+                <input type="text" id="student" name="student"
+                       placeholder="Name or roll number"
+                       value="{{ student_search }}">
+            </div>
+
+            <button type="submit" class="search-btn">
+                Apply Filter
+            </button>
+
+            <a href="{{ url_for('view') }}" class="reset-btn">
+                Reset
+            </a>
+        </form>
+    </section>
+
+    <!-- SUMMARY -->
+    <section class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-icon blue">▤</div>
+            <div>
+                <p>Total Students</p>
+                <h2>{{ total_students }}</h2>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon green">✓</div>
+            <div>
+                <p>Present</p>
+                <h2>{{ present_count }}</h2>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon red">✕</div>
+            <div>
+                <p>Absent</p>
+                <h2>{{ absent_count }}</h2>
+            </div>
+        </div>
+    </section>
+
+    
+<!-- ATTENDANCE TABLE -->
+<section class="records-card">
+    <div class="records-heading">
+        <div>
+            <h3>
+                {% if selected_filter == 'today' %}
+                    Today's Attendance
+                {% elif selected_filter == 'weekly' %}
+                    Weekly Attendance Report
+                {% elif selected_filter == 'monthly' %}
+                    Monthly Attendance Report
+                {% else %}
+                    Attendance by Date
+                {% endif %}
+            </h3>
+            <p>
+                {% if selected_filter == 'weekly' or selected_filter == 'monthly' %}
+                    Date-wise attendance from Monday to Friday only
+                {% else %}
+                    Attendance status of all enrolled students
+                {% endif %}
+            </p>
+        </div>
+        
+        
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <span class="record-label">Attendance Report</span>
+
+    <a href="{{ url_for('export_attendance', date=selected_date if selected_filter == 'specific' else end_date) }}"
+       class="search-btn"
+       style="text-decoration: none; text-align: center; white-space: nowrap;">
+        ↓ Export to Excel
+    </a>
+</div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>NO.</th>
+                    <th>STUDENT NAME</th>
+                    <th>ROLL NUMBER</th>
+
+                    {% if selected_filter == 'weekly' or selected_filter == 'monthly' %}
+
+                        {% for day in working_dates %}
+                        <th>
+                            {{ day[8:10] }}/{{ day[5:7] }}
+                            <br>
+                            <small>
+                                {% set weekday = day[0:10] %}
+                                {{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][(
+                                    (day[0:4]|int * 10000 + day[5:7]|int * 100 + day[8:10]|int)
+                                    and namespace(value=0).value
+                                )] if false else '' }}
+                            </small>
+                        </th>
+                        {% endfor %}
+
+                        <th>PRESENT</th>
+                        <th>ABSENT</th>
+
+                    {% else %}
+                        <th>DATE</th>
+                        <th>TIME</th>
+                        <th>STATUS</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in matrix_records %}
+                <tr>
+                    <td>
+                        <span class="serial">{{ loop.index }}</span>
+                    </td>
+                    <td class="student-name">{{ record.name }}</td>
+                    <td>
+                        <span class="roll-number">{{ record.roll_no }}</span>
+                    </td>
+
+                    {% if selected_filter == 'weekly' or selected_filter == 'monthly' %}
+
+                        {% for day in record.days %}
+                        <td>
+                            {% if day.status == 'P' %}
+                                <span class="status-present">P</span>
+                            {% elif day.status == 'A' %}
+                                <span class="status-absent">A</span>
+                            {% else %}
+                                <span>—</span>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+
+                        <td><strong>{{ record.present_count }}</strong></td>
+                        <td><strong>{{ record.absent_count }}</strong></td>
+
+                    {% else %}
+                        <td>{{ record.days|selectattr('status', 'equalto', 'P')|map(attribute='date')|first|default('—', true) }}</td>
+                        <td>
+                            {% set present_day = record.days|selectattr('status', 'equalto', 'P')|first %}
+                            {{ present_day.time if present_day else '—' }}
+                        </td>
+                        <td>
+                            {% if record.days|selectattr('status', 'equalto', 'P')|list %}
+                                <span class="status-present">Present</span>
+                            {% else %}
+                                <span class="status-absent">Absent</span>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="20" class="empty-cell">
+                        No enrolled students found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="records-footer">
+        <span>Showing {{ matrix_records|length }} student records</span>
+        <span>
+            Present: <strong>{{ present_count }}</strong>
+            &nbsp; | &nbsp;
+            Absent: <strong>{{ absent_count }}</strong>
+        </span>
+    </div>
+</section>
+
+        <div class="records-footer">
+            <span>Showing {{ records|length }} student records</span>
+            <span>Present: <strong>{{ present_count }}</strong>
+                &nbsp; | &nbsp; Absent: <strong>{{ absent_count }}</strong>
+            </span>
+        </div>
+    </section>
+
+    <footer class="page-footer">
+        Face Attendance System • Student Attendance Management
+    </footer>
+
+</main>
+
+<script>
+    const filterSelect = document.getElementById("filter");
+    const dateField = document.getElementById("date-field");
+    const monthField = document.getElementById("month-field");
+    const dateInput = document.getElementById("date");
+    const monthInput = document.getElementById("month");
+
+    function updateFilterFields() {
+        dateField.style.display =
+            filterSelect.value === "specific" ? "flex" : "none";
+
+        monthField.style.display =
+            filterSelect.value === "monthly" ? "flex" : "none";
+
+        dateInput.required = filterSelect.value === "specific";
+        monthInput.required = filterSelect.value === "monthly";
+    }
+
+    filterSelect.addEventListener("change", updateFilterFields);
+    updateFilterFields();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Face Attendance System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <!-- heading -->
+
+        <header class="heading">
+
+            <div>
+                <h1>Face Attendance System</h1>
+                <p>Dashboard</p>
+            </div>
+
+            <a href="{{ url_for('logout') }}" class="logout">
+                Logout
+            </a>
+
+        </header>
+
+
+        <!-- features -->
+
+        <main class="container">
+
+            <a href="{{ url_for('add') }}" class="card">
+
+                <div class="icon">
+                    👤
+                </div>
+
+                <h2>Add Student</h2>
+
+                <p>
+                    Register a new student.
+                    
+                </p>
+
+            </a>
+
+
+           <a href="{{ url_for('attendence') }}" class="card">
+
+                <div class="icon">
+                    📷
+                </div>
+
+                <h2>Take Attendance</h2>
+
+                <p>
+                    Use face recognition
+                    to mark attendance.
+                </p>
+
+            </a>
+
+
+            <a href="{{ url_for('view') }}" class="card">
+
+                <div class="icon">
+                    📋
+                </div>
+
+                <h2>View Attendance</h2>
+
+                <p>
+                    View student attendance
+                    records.
+                </p>
+
+            </a>
+
+
+            <a href="{{ url_for('delete') }}" class="card">
+
+                <div class="icon">
+                    🗑️
+                </div>
+
+                <h2>Delete Student</h2>
+
+                <p>
+                    Remove a student
+                    from the system.
+                </p>
+
+            </a>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

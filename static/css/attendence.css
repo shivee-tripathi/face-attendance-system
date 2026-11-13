@@ -1,0 +1,161 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f8fc;
+}
+
+.page {
+    min-height: 100vh;
+}
+
+.header {
+    background: #1769aa;
+    color: white;
+    padding: 20px 40px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 25px;
+}
+
+.header p {
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+.back-button {
+    color: white;
+    text-decoration: none;
+    background: rgba(255,255,255,0.15);
+    padding: 10px 16px;
+    border-radius: 6px;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    padding: 45px 20px;
+}
+
+.attendance-card {
+    background: white;
+    width: 700px;
+    padding: 30px;
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+    text-align: center;
+}
+
+.attendance-card h2 {
+    color: #1769aa;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.camera-section {
+    width: 520px;
+    height: 520px;
+    margin: 0 auto;
+
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    display: block;
+}
+
+canvas {
+    display: none;
+}
+
+#cameraStatus {
+    margin: 18px 0;
+    color: #555;
+}
+
+button {
+    border: none;
+    padding: 12px 22px;
+    margin: 5px;
+
+    border-radius: 6px;
+
+    background: #1769aa;
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #12578d;
+}
+
+button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.message {
+    background: #e8f7ed;
+    color: #20733b;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+.error {
+    background: #fdeaea;
+    color: #b42318;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+.camera-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #0f172a;
+}
+
+#camera {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#faceOverlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}

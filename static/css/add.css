@@ -1,0 +1,206 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f8ff;
+    color: #172033;
+}
+
+
+/* ================= HEADER ================= */
+
+.header {
+    height: 90px;
+
+    background: white;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 60px;
+}
+
+.header h1 {
+    color: #2563eb;
+    font-size: 24px;
+}
+
+.header p {
+    color: #667085;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.back-button {
+    text-decoration: none;
+
+    color: #2563eb;
+
+    border: 1px solid #2563eb;
+
+    padding: 10px 18px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+.back-button:hover {
+    background: #2563eb;
+    color: white;
+}
+
+
+/* ================= CONTENT ================= */
+
+.content {
+    min-height: calc(100vh - 90px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ================= FORM CARD ================= */
+
+.form-card {
+    width: 450px;
+
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 40px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.form-card h2 {
+    font-size: 25px;
+
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #667085;
+
+    font-size: 14px;
+
+    margin-bottom: 30px;
+}
+
+
+/* ================= INPUT ================= */
+
+.input-group {
+    margin-bottom: 22px;
+}
+
+.input-group label {
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+
+    color: #344054;
+}
+
+.input-group input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* ================= BUTTON ================= */
+
+button {
+    width: 100%;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+
+/* ================= ERROR ================= */
+
+.error {
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+    padding: 10px 12px;
+
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+    .header {
+        padding: 0 20px;
+    }
+
+    .header h1 {
+        font-size: 18px;
+    }
+
+    .content {
+        padding: 25px;
+    }
+
+    .form-card {
+        width: 100%;
+        padding: 30px;
+    }
+}

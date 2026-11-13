@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login page</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+
+    <div class="login-page">
+
+        <!-- LEFT SECTION  -->
+
+        <section class="left-section">
+
+            <div class="content">
+
+
+                <h1>Face Attendance<br>System</h1>
+
+                <p class="description">
+                    Smart and efficient attendance management
+                    using face recognition technology.
+                </p>
+
+                <div class="features">
+
+                    <div class="feature">
+                        <div class="icon">◉</div>
+                        <div>
+                            <h3>Face Recognition</h3>
+                            <p>Fast and automatic identification</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="icon">✓</div>
+                        <div>
+                            <h3>Quick Attendance</h3>
+                            <p>Mark attendance in seconds</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="icon">▣</div>
+                        <div>
+                            <h3>Attendance Records</h3>
+                            <p>View and manage attendance easily</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SECTION -->
+
+        <section class="right-section">
+
+            <div class="login">
+
+            
+
+                <h2>Welcome Back</h2>
+
+                <p class="account">
+                    Login to your account to continue
+                </p>
+
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('login') }}">
+
+                    <div class="inputs">
+
+                        <label for="email">Email / Username</label>
+
+                        <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        required
+                        >
+
+                    </div>
+
+
+                    <div class="inputs">
+
+                        <label for="password">Password</label>
+
+                        <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                    </div>
+
+                     <div>
+                    <label class="remember">
+                        <input
+                        type="checkbox"
+                        name="remember"
+                        value="yes"
+                        >
+                        Remember me
+                        </label>
+                        </div>
+
+                    <button type="submit">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="footer">
+                    Face Attendance System
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</body>
+
+</html>

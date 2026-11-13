@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Take Attendance | Face Attendance System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/attendence.css') }}">
+
+</head>
+
+
+<body>
+
+    <div class="page">
+
+        <header class="header">
+
+            <div>
+                <h1>Face Attendance System</h1>
+                <p>Take Attendance</p>
+            </div>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="back-button">
+                Back to Dashboard
+            </a>
+
+        </header>
+
+
+        <main class="content">
+
+            <div class="attendance-card">
+
+                <h2>Face Recognition Attendance</h2>
+
+                <p class="subtitle">
+                    Start the camera and look directly at the camera.
+                </p>
+
+
+                {% if message %}
+                    <div class="message">
+                        {{ message }}
+                    </div>
+                {% endif %}
+
+
+                {% if error %}
+                    <div class="error">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+
+                
+<div class="camera-wrapper">
+    <video id="camera" autoplay playsinline></video>
+    <canvas id="faceOverlay"></canvas>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+
+                <p id="cameraStatus">
+                    Camera is not started.
+                </p>
+
+
+                <button
+                    type="button"
+                    id="startCameraBtn">
+                    Start Camera
+                </button>
+
+
+                <button
+                    type="button"
+                    id="attendanceBtn"
+                    disabled>
+                    Mark Attendance
+                </button>
+
+
+                <form
+                    method="POST"
+                    id="attendanceForm">
+
+                    <input
+                        type="hidden"
+                        name="face_image"
+                        id="face_image">
+
+                </form>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+
+<script>
+const camera = document.getElementById("camera");
+const faceOverlay = document.getElementById("faceOverlay");
+const canvas = document.getElementById("canvas");
+
+const startCameraBtn =
+    document.getElementById("startCameraBtn");
+
+const attendanceBtn =
+    document.getElementById("attendanceBtn");
+
+const cameraStatus =
+    document.getElementById("cameraStatus");
+
+const faceImage =
+    document.getElementById("face_image");
+
+const attendanceForm =
+    document.getElementById("attendanceForm");
+
+let stream = null;
+
+// Start Camera
+startCameraBtn.addEventListener(
+    "click",
+    async function () {
+        try {
+            stream =
+                await navigator.mediaDevices.getUserMedia({
+                    video: true
+                });
+
+            camera.srcObject = stream;
+
+            cameraStatus.textContent =
+                "Camera is active. Look at the camera.";
+
+            attendanceBtn.disabled = false;
+            startCameraBtn.disabled = true;
+
+            await camera.play();
+
+            detectionInterval = setInterval(detectFace, 700);
+
+        } catch (error) {
+            console.error(error);
+
+            cameraStatus.textContent =
+                "Could not access camera. Please allow camera permission.";
+        }
+    }
+);
+
+let detectionInterval = null;
+
+async function detectFace() {
+    if (!stream || camera.readyState < 2) {
+        return;
+    }
+
+    faceOverlay.width = camera.videoWidth;
+    faceOverlay.height = camera.videoHeight;
+
+    const context = faceOverlay.getContext("2d");
+
+    context.clearRect(
+        0, 0, faceOverlay.width, faceOverlay.height
+    );
+
+    canvas.width = camera.videoWidth;
+    canvas.height = camera.videoHeight;
+
+    const captureContext = canvas.getContext("2d");
+
+    captureContext.drawImage(
+        camera, 0, 0, canvas.width, canvas.height
+    );
+
+    try {
+        const response = await fetch("/detect-face", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                image: canvas.toDataURL("image/jpeg", 0.7)
+            })
+        });
+
+        if (!response.ok) {
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            return;
+        }
+
+        result.faces.forEach(function(face) {
+            const width = face.right - face.left;
+            const height = face.bottom - face.top;
+
+            context.strokeStyle = "#22c55e";
+            context.lineWidth = 4;
+
+            context.strokeRect(
+                face.left, face.top, width, height
+            );
+        });
+
+        if (result.faces.length === 1) {
+            cameraStatus.textContent =
+                "Face detected. You can mark attendance.";
+
+        } else if (result.faces.length > 1) {
+            cameraStatus.textContent =
+                "Multiple faces detected. Please keep one face in view.";
+
+        } else {
+            cameraStatus.textContent =
+                "No face detected. Look at the camera.";
+        }
+
+    } catch (error) {
+        console.error("Face detection error:", error);
+    }
+}
+
+// Mark Attendance
+attendanceBtn.addEventListener(
+    "click",
+    function () {
+        if (!stream) {
+            return;
+        }
+
+        canvas.width = camera.videoWidth;
+        canvas.height = camera.videoHeight;
+
+        const context = canvas.getContext("2d");
+
+        context.drawImage(
+            camera, 0, 0, canvas.width, canvas.height
+        );
+
+        const imageData =
+            canvas.toDataURL("image/jpeg");
+
+        faceImage.value = imageData;
+
+        cameraStatus.textContent =
+            "Checking face...";
+
+        attendanceBtn.disabled = true;
+
+        attendanceForm.submit();
+    }
+);
+</script>
+
+
+
+</body>
+
+</html>

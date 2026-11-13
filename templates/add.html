@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Student | Face Attendance System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/add.css') }}">
+
+</head>
+
+<body>
+
+    <div class="page">
+
+        <header class="header">
+
+            <div>
+                <h1>Face Attendance System</h1>
+                <p>Add Student</p>
+            </div>
+
+            <a href="{{ url_for('dashboard') }}" class="back-button">
+                Back to Dashboard
+            </a>
+
+        </header>
+
+
+        <main class="content">
+
+            <div class="form-card">
+
+                <h2>Add New Student</h2>
+
+                <p class="subtitle">
+                    Enter the student's basic information.
+                </p>
+
+
+                {% if error %}
+                    <div class="error">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+<form method="POST" id="studentForm">
+
+    <div class="input-group">
+
+        <label for="name">
+            Student Name
+        </label>
+
+        <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            placeholder="Enter student name" 
+            required 
+        >
+
+    </div>
+
+
+    <div class="input-group">
+
+        <label for="roll_no">
+            Roll Number
+        </label>
+
+        <input 
+            type="text" 
+            id="roll_no" 
+            name="roll_no" 
+            placeholder="Enter roll number" 
+            required 
+        >
+
+    </div>
+
+
+    <!-- Camera -->
+
+    <div class="camera-section">
+
+        <h3>Register Face</h3>
+
+        <video 
+            id="camera"
+            autoplay
+            playsinline>
+        </video>
+
+        <canvas id="canvas"></canvas>
+
+        <p id="cameraStatus">
+            Click "Start Camera" to begin.
+        </p>
+
+        <button type="button" id="startCameraBtn">
+            Start Camera
+        </button>
+
+        <button 
+            type="button" 
+            id="captureBtn"
+            disabled>
+            Capture Face
+        </button>
+
+    </div>
+
+
+    <!-- Captured image will be sent to Flask -->
+
+    <input 
+        type="hidden" 
+        name="face_image" 
+        id="face_image"
+    >
+
+
+    <button 
+        type="submit"
+        id="registerBtn"
+        disabled>
+        Save Student
+    </button>
+
+</form>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+
+const camera = document.getElementById("camera");
+const canvas = document.getElementById("canvas");
+
+const startCameraBtn = document.getElementById("startCameraBtn");
+const captureBtn = document.getElementById("captureBtn");
+
+const cameraStatus = document.getElementById("cameraStatus");
+const faceImage = document.getElementById("face_image");
+const registerBtn = document.getElementById("registerBtn");
+
+let stream = null;
+
+
+// Start Camera
+startCameraBtn.addEventListener("click", async function () {
+
+    try {
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: true
+        });
+
+        camera.srcObject = stream;
+
+        cameraStatus.textContent =
+            "Camera is active. Look directly at the camera.";
+
+        captureBtn.disabled = false;
+        startCameraBtn.disabled = true;
+
+    } catch (error) {
+
+        console.error(error);
+
+        cameraStatus.textContent =
+            "Could not access camera. Please allow camera permission.";
+
+    }
+
+});
+
+
+// Capture Face
+captureBtn.addEventListener("click", function () {
+
+    if (!stream) {
+        return;
+    }
+
+    canvas.width = camera.videoWidth;
+    canvas.height = camera.videoHeight;
+
+    const context = canvas.getContext("2d");
+
+    context.drawImage(
+        camera,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    // Convert captured image to base64
+    const imageData = canvas.toDataURL("image/jpeg");
+
+    faceImage.value = imageData;
+
+    cameraStatus.textContent =
+        "Face captured successfully. You can now save the student.";
+
+    registerBtn.disabled = false;
+
+    // Stop camera
+    stream.getTracks().forEach(track => track.stop());
+
+    camera.srcObject = null;
+
+    captureBtn.disabled = true;
+
+});
+
+</script>
+
+</body>
+
+</html>
